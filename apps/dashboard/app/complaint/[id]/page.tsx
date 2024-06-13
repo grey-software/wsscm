@@ -17,9 +17,14 @@ import { ColorRing, RotatingLines } from "react-loader-spinner";
 import { API } from "@/GlobalState/ApiCalls/complaintApiCalls";
 import { toast } from "react-hot-toast";
 import { complaintTypes } from "@/@types/complaintTypes.types";
+import { number } from "yup";
+import './timeline2.css'
 
 const Page = ({ params }: any) => {
   const id = params.id;
+  const [responseLog, setResponseLog] = useState<any[]>([]);
+  const [feedbackLog, setFeedbackLog] = useState<any[]>([]);
+  const [feedbackIndex, setFeedbackIndex] = useState(0);
   const dispatch = useDispatch();
   const navigate = useRouter();
   const [wsscStatement, setWsscStatement] = useState<string>("");
@@ -52,6 +57,8 @@ const Page = ({ params }: any) => {
       });
       if (res.data.complaint) {
         setComplaint(res.data.complaint);
+        setResponseLog(res.data.complaint.responseLog);
+        setFeedbackLog(res.data.complaint.feedbackLog);
       }
       setPending(false);
     } catch (err: any) {
@@ -282,7 +289,7 @@ const Page = ({ params }: any) => {
                       </span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="font-semibold">Intiated At</span>
+                      <span className="font-semibold">Initiated At</span>
                       <span>{complaint?.createdAt.split("T")[0]}</span>
                     </div>
                     <div className="flex items-start gap-2">
@@ -505,6 +512,223 @@ const Page = ({ params }: any) => {
                 </div>
               </>
             )}
+          </div>
+
+          {/* complaint Log */}
+          <div className="shadow-md p-5 rounded-md border-2 border-gray-50 w-full">
+            <h1 className="mb-1 font-bold text-md">Complaint Logs</h1>
+            <div className="w-full border-[1px] border-gray-300 mb-4"></div>
+            {/* <div className="shadow-md p-5 rounded-md border-2 border-gray-300 w-100">
+              <h1 className="font-bold">Log</h1> */}
+              {/* <div className="w-full border-[1px] border-gray-300 mb-4"></div> */}
+              {/* <div className="grid grid-cols-2 gap-4  mt-4 w-full"> */}
+                {/* Supervisor Response */}
+                {complaint?.responseLog != '' ? (
+                <div className="timeline">
+                  <ul>
+                  {responseLog.map(
+                    (item: any, index1: React.Key) => (
+                      <li key={index1}>
+                      <div className="mb-0">
+                        {/* <div className="p-4 col-span-1 shadow-md flex flex-col gap-2 border-gray-200 border-2 rounded-md"> */}
+                        <div className="p-0 col-span-1 flex flex-col ">
+                          <h1 className="dott text-md font-bold">
+                            <span className="text-4xl">.</span>
+                            Response
+                          </h1>
+                          {/* <div className="flex flex-row flex-wrap gap-4"> */}
+                          <div className="flex flex-row gap-x-40">
+                          <div className="flex flex-col basis-1/2 ">
+                            <div className="p-0 col-span-3 flex flex-col ">
+                              <div className="flex items-start gap-2 pl-2">
+                                <span className="font-semibold">Date:</span>
+                                <span>{complaint?.responseLog[index1]?.created_at.split('T')[0]}</span>
+                                <span className="font-semibold">Time:</span>
+                                <span>{complaint?.responseLog[index1]?.created_at.split('T')[1]?.substring(0, 8)}</span>
+                              </div>
+                            </div>  
+                            <div className="flex ml-2.5 items-start gap-2 text-sm">
+                              <span className="font-semibold">Desription</span>
+                              <p>{item.description}</p>
+                            </div>
+                          </div>
+                            <div className="grid grid-cols-2 mt-1 w-full">
+                              <div className="grid grid-cols-2 gap-4  mt-4 w-full">
+                                {item.ImageUrl || item.VideoUrl ? (
+                                  <>
+                                    {item.ImageUrl && (
+                                      <Image
+                                        onClick={() => {
+                                          setModalPic(item.ImageUrl);
+                                          setShowPic(true);
+                                        }}
+                                        src={item.ImageUrl}
+                                        className="h-36 w-32 cursor-pointer"
+                                        width={300}
+                                        height={100}
+                                        alt="Complaint-Picture"
+                                      />
+                                    )}
+                                    {complaint?.response?.VideoUrl && (
+                                      <video className="h-36 w-32" controls>
+                                        <source
+                                          src={complaint?.response?.VideoUrl}
+                                        />
+                                      </video>
+                                    )}
+                                  </>
+                                ) : (
+                                  <h1 className="font-semibold text-gray-400">
+                                    The Supervisor have not provided any Media
+                                  </h1> 
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          {/* <div classNa  me="grid grid-cols-2 mt-1 w-full"> */}
+                          {/* <div className="flex ml-2.5 items-start gap-2 text-sm">
+                            <span className="font-semibold">Desription</span>
+                            <p>{item.description}</p>
+                          </div> */}
+                          {/* <div>
+                          <div className="grid grid-cols-2 gap-4  mt-4 w-full">
+                            {item.ImageUrl || item.VideoUrl ? (
+                              <>
+                                {item.ImageUrl && (
+                                  <Image
+                                    onClick={() => {
+                                      setModalPic(item.ImageUrl);
+                                      setShowPic(true);
+                                    }}
+                                    src={item.ImageUrl}
+                                    className="h-36 w-32 cursor-pointer"
+                                    width={300}
+                                    height={100}
+                                    alt="Complaint-Picture"
+                                  />
+                                )}
+                                {complaint?.response?.VideoUrl && (
+                                  <video className="h-36 w-32" controls>
+                                    <source
+                                      src={complaint?.response?.VideoUrl}
+                                    />
+                                  </video>
+                                )}
+                              </>
+                            ) : (
+                              <h1 className="font-semibold text-gray-400">
+                                The Supervisor have not provided any Media
+                              </h1> 
+                            )}
+                          </div>
+                          </div> */}
+                          {/* </div> */}
+                        </div>
+                      </div>
+
+                      {/* Citizen Feedback */}
+                      {complaint?.feedbackLog != '' ? (
+                      <div className="h-64 p-1 flex flex-col gap-2">
+                          <h1 className="text-md font-bold">
+                          <span className="text-4xl">.</span>
+                            Feedback  
+                          </h1>
+                          <div className="flex items-start gap-2 pl-2">   
+                            <span className="font-semibold">Date:</span>
+                            <span>{complaint?.feedbackLog[index1]?.created_at.split('T')[0]}</span>
+                            <span className="font-semibold">Time:</span>
+                            <span>{complaint?.feedbackLog[index1]?.created_at.split('T')[1]?.substring(0, 8)}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-2xl pl-2">
+                            {rates.map((value, index) => (
+                              <div key={index}>
+                                {value <= complaint?.feedbackLog[index1]?.rating ? (
+                                  <span className="text-initiatedColor">
+                                    <AiFillStar />
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-300">
+                                    <AiFillStar />
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                            {RatingInWords.map((w, index) => (
+                              <>
+                                {index == complaint?.feedbackLog[index1].rating && (
+                                  <span className="text-sm text-initiatedColor font-bold ml-2">
+                                    {w}
+                                  </span>
+                                )}
+                              </>
+                            ))}
+                          </div>
+                          <p className="text-sm ml-2.5">{complaint?.feedbackLog[index1].description}</p>
+                        </div>)
+                      :(
+                        <h1 className="font-semibold text-gray-400">
+                          No Citizen Feedback yet
+                        </h1>
+                      )  
+                      }
+                      </li>
+                    )
+                  )}
+                  </ul>
+                </div>
+                ) : (
+                  <h1 className="font-semibold text-gray-400">
+                    No Logs yet
+                  </h1>
+                )}
+
+                {/* Citizen Feedback */}
+                {/* {complaint?.feedbackLog != '' ? (
+                <div className="">
+                  {feedbackLog.map(
+                    (item: any, index: React.Key | null | undefined) => (
+                      <div key={index} className="mb-6">
+                        <div className="h-64 p-4 shadow-md flex flex-col gap-2 w-[100%] border-gray-200 border-2 rounded-md">
+                          <h1 className="text-md font-bold">
+                            Feedback  
+                          </h1>
+                          <div className="flex items-center gap-1 text-2xl">
+                            {rates.map((value, index) => (
+                              <div key={index}>
+                                {value <= item.rating ? (
+                                  <span className="text-initiatedColor">
+                                    <AiFillStar />
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-300">
+                                    <AiFillStar />
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                            {RatingInWords.map((w, index) => (
+                              <>
+                                {index == item.rating && (
+                                  <span className="text-sm text-initiatedColor font-bold ml-2">
+                                    {w}
+                                  </span>
+                                )}
+                              </>
+                            ))}
+                          </div>
+                          <p className="text-sm">{item.description}</p>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+                ) : (
+                  <h1 className="font-semibold text-gray-400">
+                    No Citizen Feedback yet
+                  </h1>
+                )} */}
+              {/* </div> */}
+            {/* </div> */}
           </div>
 
           {/* MODAL SHOW IMAGE */}

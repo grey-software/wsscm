@@ -47,11 +47,61 @@ const ComplaintSchema = new mongoose.Schema(
       type: {
         ImageUrl: {
           type: String,
-          // required: [true, "Image is required in responce"],
+          required: [true, "Image is required in response"],
         },
         description: String,
       },
     },
+    // LOG
+    feedbackLog: {
+      type: [{
+        rating: {
+          type: Number,
+          required: [true, "Rating is required in feedback"],
+        },
+        description: String,
+        created_at : { type: Date,
+                       default: Date.now 
+                    }
+    }],
+    },
+    responseLog: {
+      type: [{
+        ImageUrl: {
+          type: String,
+          // required: [true, "Image is required in response"],
+        },
+        description: String,
+        created_at : { type: Date,
+          default: Date.now 
+       }
+    }],
+    },
+
+  //   log:{
+  //     _id: true,
+  //     type: [
+  //       {
+  //     response: {
+  //       type: {
+  //         ImageUrl: {
+  //           type: String,
+  //           // required: [true, "Image is required in response"],
+  //         },
+  //         description: String,
+  //       },
+  //     },
+  //     feedback: {
+  //       type: {
+  //         rating: {
+  //           type: Number,
+  //           required: [true, "Rating is required in feedback"],
+  //         },
+  //         description: String,
+  //       },
+  //     },
+  //   }],
+  // },
     ImageUrl: { type: String },
     VideoUrl: { type: String },
   },

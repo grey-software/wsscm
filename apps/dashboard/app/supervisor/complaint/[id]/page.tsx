@@ -56,7 +56,7 @@ const Page = ({ params }: any) => {
       return;
     }
 
-    // when both media and des have been provided supervisor then api will be called to update the complaint status
+    // when both media and des have been provided by supervisor then api will be called to update the complaint status
     try {
       const response = {
         complaintId: complaint?._id,
@@ -177,40 +177,40 @@ const Page = ({ params }: any) => {
 
             {/* COMPLAINT DETAILS */}
             <div className="px-3 py-3 my-1 mx-2 gap-3 text-[15px] rounded-md flex flex-col flex-wrap justify-between md:justify-around border-2 border-gray-200 shadow-md bg-white">
-              <div className="flex justify-between">
-                <p>
-                  <span className="text-gray-500">Type:</span>
-                  <span className="font-bold"> {complaint?.complaintType}</span>
-                </p>
-                <p>
-                  <span className="text-gray-500">Status: </span>
-                  <span
-                    className={`font-bold ${
-                      complaint?.status[complaint?.status.length - 1]?.state ===
-                      "Initiated"
-                        ? "text-initiatedColor"
-                        : ""
-                    }  ${
-                      complaint?.status[complaint?.status.length - 1]?.state ===
-                      "InProgress"
-                        ? "text-inprogessColor"
-                        : ""
-                    } ${
-                      complaint?.status[complaint?.status.length - 1]?.state ===
-                      "Completed"
-                        ? "text-completedColor"
-                        : ""
-                    } ${
-                      complaint?.status[complaint?.status.length - 1]?.state ===
-                      "Closed"
-                        ? "text-closedColor"
-                        : ""
-                    }`}
-                  >
-                    {complaint?.status[complaint?.status.length - 1]?.state}
-                  </span>
-                </p>
-              </div>
+                <div className="flex justify-between">
+                  <p>
+                    <span className="text-gray-500">Type:</span>
+                    <span className="font-bold"> {complaint?.complaintType}</span>
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Status: </span>
+                    <span
+                      className={`font-bold ${
+                        complaint?.status[complaint?.status.length - 1]?.state ===
+                        "Initiated"
+                          ? "text-initiatedColor"
+                          : ""
+                      }  ${
+                        complaint?.status[complaint?.status.length - 1]?.state ===
+                        "InProgress"
+                          ? "text-inprogessColor"
+                          : ""
+                      } ${
+                        complaint?.status[complaint?.status.length - 1]?.state ===
+                        "Completed"
+                          ? "text-completedColor"
+                          : ""
+                      } ${
+                        complaint?.status[complaint?.status.length - 1]?.state ===
+                        "Closed"
+                          ? "text-closedColor"
+                          : ""
+                      }`}
+                    >
+                      {complaint?.status[complaint?.status.length - 1]?.state}
+                    </span>
+                  </p>
+                </div>
               <div className="flex justify-between">
                 <p className="uppercase">
                   <span className="text-gray-500 ">ID: </span>

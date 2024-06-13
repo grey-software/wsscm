@@ -12,12 +12,16 @@ import WSSC from "./Routes/WSSCs.route";
 import mongoose, { ConnectOptions } from "mongoose";
 import testingRouter from "./dummyRoute";
 import Supervisor from "./Routes/supervisor.route";
-
+import { createServer } from "http"; // Import Node's native http module
+import { Server, Socket } from "socket.io"; 
 dotenv.config();
 
 const app: Express = express();
+const server = createServer(app); // Create an HTTP server
+const io = new Server(server);
+export { io };
 
-const PORT = Number(process.env.PORT);
+const PORT = Number(process.env.PORT || 3000);
 const Mongo_uri: any = process.env.DB_URL;
 
 // ----- connecting to database -----
@@ -72,7 +76,22 @@ app.all("*", (req: Request, res: Response) => {
   });
 });
 
-// -------- app listening port number ---------
-app.listen(PORT, () => {
-  console.log(`App listening on port: ${PORT}`);
+io.on("connection", (socket: Socket) => {
+  console.log("A user connected");
+
+  // Example event handler
+  socket.on("exampleEvent", (data) => {
+    console.log("Received data:", data);
+    // Handle the received data
+  });
+
+  // Handle disconnection
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+
+// -------- server listening port number ---------
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });

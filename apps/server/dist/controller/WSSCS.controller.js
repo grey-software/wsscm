@@ -156,20 +156,19 @@ const Statistics = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         let totalFeedbacks = 0;
         complaints &&
             complaints.forEach((complaint, index) => {
-                var _a, _b, _c, _d, _e, _f;
-                console.log((_a = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _a === void 0 ? void 0 : _a.rating);
+                var _a, _b, _c, _d, _e;
                 if (complaint.feedback) {
                     totalFeedbacks += 1;
                 }
-                if (((_b = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _b === void 0 ? void 0 : _b.rating) == 1)
+                if (((_a = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _a === void 0 ? void 0 : _a.rating) == 1)
                     one += 1;
-                if (((_c = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _c === void 0 ? void 0 : _c.rating) == 2)
+                if (((_b = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _b === void 0 ? void 0 : _b.rating) == 2)
                     two += 1;
-                if (((_d = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _d === void 0 ? void 0 : _d.rating) == 3)
+                if (((_c = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _c === void 0 ? void 0 : _c.rating) == 3)
                     three += 1;
-                if (((_e = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _e === void 0 ? void 0 : _e.rating) == 4)
+                if (((_d = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _d === void 0 ? void 0 : _d.rating) == 4)
                     four += 1;
-                if (((_f = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _f === void 0 ? void 0 : _f.rating) == 5)
+                if (((_e = complaint === null || complaint === void 0 ? void 0 : complaint.feedback) === null || _e === void 0 ? void 0 : _e.rating) == 5)
                     five += 1;
             });
         let rate = one * 1 + two * 2 + three * 3 + four * 4 + five * 5;

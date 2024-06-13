@@ -108,7 +108,7 @@ const HomeScreen = () => {
           </h2>
         </div>
 
-        {/* --- Displaying all complaints ---- */}
+        {/* --- Displaying all complaints ---- */}  
 
         {!loading ? (
           complaints.length != 0 ? (

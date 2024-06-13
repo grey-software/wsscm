@@ -35,8 +35,7 @@ export const ComplaintValidation = (
       ),
 
     ImageUrl: Joi.string(),
-
-    VideoUrl: Joi.string(),
+    VideoUrl: Joi.string().allow('', null).optional(),
   });
 
   const complaintValid: Joi.ValidationResult<any> =

@@ -8,7 +8,7 @@ import SuprvsorReducer from "./Supervisor-ApiCalls/ApiCalls/supervisorSlice/Auth
 import SupervisorComplaints from "./Supervisor-ApiCalls/ApiCalls/supervisorSlice/supervisorComplaintsSlice";
 import StatisticReducer from "./WSSC_Slice";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
-import {
+import {  
   persistReducer,
   FLUSH,
   REHYDRATE,

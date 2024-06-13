@@ -27,7 +27,7 @@ const complaintSlice = createSlice({
 
     // Get specific supervisor complaints
     GetSupervisorComplaintsSuccess: (state, action) => {
-      state.loading = false;
+      state.loading = false;  
       state.supervisorComplaints = action.payload;
     },
 

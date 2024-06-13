@@ -11,6 +11,8 @@ export type complaintTypes = {
   ImageUrl?: string;
   feedback?: any;
   response?: any;
+  responseLog?: any;
+  feedbackLog?: any;
   VideoUrl?: string;
   status: any;
   createdAt: string;

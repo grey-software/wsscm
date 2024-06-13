@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 import { ComplaintValidation } from "../Schema_validation/Complaint_Validation";
 import { IComplaint } from "../@types/ComplaintSchema.type";
 import { Novu } from "@novu/node";
+import { io } from '../server'
 
 // eslint-disable-next-line turbo/no-undeclared-env-vars
 const novu = new Novu(`${process.env.NOVU_KEY}`);
@@ -143,6 +144,28 @@ export const AssignComplaint = async (req: Request, res: Response) => {
     });
 
     await novu.trigger("complaint-status-updated", {
+      to: {
+        subscriberId: assigned.supervisorId,
+      },
+      payload: {
+        id: complaintId,
+        message:
+          "A new complaint is assigned to you, refresh complaints page to see",
+      },
+    });
+     // Emit a Socket.IO event instead of using novu.trigger
+     io.emit("complaint-status-updated1", {
+      to: {
+        subscriberId: assigned?.userId,
+      },
+      payload: {
+        id: complaintId,
+        message: "Your complaint is being processed",
+      },
+    });
+    
+
+    io.emit("complaint-status-updated", {
       to: {
         subscriberId: assigned.supervisorId,
       },
@@ -429,29 +452,36 @@ export const CitizenFeedback = async (
           { $set: { feedback } },
           { new: true }
         );
+        
       }
-
+      await ComplaintModel.findByIdAndUpdate(
+        complaintId,
+        { $addToSet: { feedbackLog: feedback } },
+      );
       // if the citizen feedback rating is greater than or equal to 3 out of 5, it means he is satisfied with service
       if (rating > 2) {
         let status = {
           state: "Closed",
           updateAt: new Date().toLocaleDateString(),
         };
-        await ComplaintModel.findByIdAndUpdate(complaintId, {
-          $addToSet: { status: status },
-        });
+        await ComplaintModel.findByIdAndUpdate(complaintId, 
+          {
+          $addToSet: { status: status, feedbackLog: feedback },
+        }
+        );
 
       } else {
         // if the citizen feedback rating is less 3, it means that service is not satisfactory then the complaint will be rollback to the InProgress stage
         updated = await ComplaintModel.findByIdAndUpdate(
           complaintId,
           {
+            // $set: { feedback },
             $pop: { status: 1 }, // Remove the last element from the 'status' array
             $unset: { response: 1 } // Remove the 'response' field
           },
           { new: true }
         );
-      }
+      } 
       // SENDING NOTIFICATION ON THE BASIS OF CITIZEN FEEDBACK
       const isSatisfied = rating > 2;
       // Prepare the notification message based on satisfaction level
@@ -463,7 +493,25 @@ export const CitizenFeedback = async (
         { subscriberId: updated.supervisorId, message: `A complaint assigned to you is ${complaintMessage} 🎉` },
         { subscriberId: updated.WSSC_CODE, message: `A citizen provided Feedback on a complaint, visit Feedbacks to see` },
       ];
-
+      // Emit a Socket.IO event instead of using novu.trigger
+     io.emit("complaint-status-updated1", {
+      to: {
+        subscriberId: updated?.userId,
+      },
+      payload: {
+        id: complaintId,
+        message: `Your complaint is ${complaintMessage}`,
+      },
+    });
+     io.emit("complaint-status-updated", {
+      to: {
+        subscriberId: updated?.userId,
+      },
+      payload: {
+        id: complaintId,
+        message: `A complaint assigned to you is ${complaintMessage}`,
+      },
+    });
       // Trigger the notifications
       await Promise.all(notifications.map(async (notification) => {
         await novu.trigger("complaint-status-updated", {
@@ -512,9 +560,20 @@ export const SupervisorResponse = async (
     if (complaint.supervisorId == LoggedId) {
       const responded = await ComplaintModel.findByIdAndUpdate(
         complaintId,
-        { $set: { response: req.body } },
+        { 
+          $set: { response: req.body },
+      },
         { new: true }
       );
+      // Adding value to the response log
+      await ComplaintModel.findByIdAndUpdate(
+        complaintId,
+        { 
+          $addToSet: { responseLog: req.body} ,
+      },
+      );
+      // console.log(responseLog._id);
+      
       let status = {
         state: "Completed",
         updateAt: new Date().toLocaleDateString(),
@@ -525,6 +584,16 @@ export const SupervisorResponse = async (
 
       // SENDING NOTIFICATION TO CITIZEN
       await novu.trigger("complaint-status-updated", {
+        to: {
+          subscriberId: responded.userId,
+        },
+        payload: {
+          id: complaintId,
+          message: "Your complaint is Resolved, Please give your Feedback",
+        },
+      });
+       // for mobile notification
+       io.emit("complaint-status-updated1", {
         to: {
           subscriberId: responded.userId,
         },
